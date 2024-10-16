@@ -20,12 +20,9 @@ const authenticateUser = (req, res, next) => {
 
 // Route to post a job (only for employers)
 router.post('/', verifyToken, async (req, res) => {
-  const { title, description, company, location, salary, jobType, employer } = req.body;
-
-  // Ensure employer is a valid ObjectId
-  if (!mongoose.Types.ObjectId.isValid(employer)) {
-    return res.status(400).json({ message: 'Invalid employer ID format' });
-  }
+  const { title, description, company, location, salary, jobType } = req.body;
+  const firebaseUid = req.user.uid; // Get Firebase UID from token
+  const employer = await User.findOne({ firebaseUid });
 
   try {
     // Check if the employer exists and has the 'employer' role
@@ -42,7 +39,7 @@ router.post('/', verifyToken, async (req, res) => {
       location,
       salary,
       jobType,
-      employer: new mongoose.Types.ObjectId(employer), // Convert employer to ObjectId
+      employer,
     });
 
     const savedJob = await newJob.save();
