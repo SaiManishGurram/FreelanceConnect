@@ -7,7 +7,7 @@ const applicationSchema = new mongoose.Schema({
     required: true,
   },
   freelancerId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   coverLetter: {
