@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/', async (req, res) => {
     console.log('req...',req.body);
     
-    const { uid, email, role } = req.body;
+    const { uid, firstName, lastName, email, role } = req.body;
 
     try {
         // Check if user already exists in MongoDB
@@ -20,8 +20,10 @@ router.post('/', async (req, res) => {
         // Create new user in MongoDB
         const newUser = new User({
             firebaseUid: uid,      // Firebase UID
+            firstName,
+            lastName,
             email,    // Firebase email
-            role: role, // Default role as 'user', could be 'freelancer' or 'employer' based on your logic
+            role, // Default role as 'user', could be 'freelancer' or 'employer' based on your logic
         });
 
         const savedUser = await newUser.save();
