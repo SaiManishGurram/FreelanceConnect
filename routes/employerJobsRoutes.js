@@ -30,4 +30,37 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
+// Route to post a job (only for employers)
+router.post('/createJob', verifyToken, async (req, res) => {
+  const { title, description, company, location, salary, jobType, skills } = req.body;
+  const firebaseUid = req.user.uid; // Get Firebase UID from token
+  const employer = await User.findOne({ firebaseUid });
+
+  try {
+    // Check if the employer exists and has the 'employer' role
+    const employerExists = await User.findOne({ _id: employer, role: 'employer' });
+    if (!employerExists) {
+      return res.status(404).json({ message: 'Employer not found or not an employer' });
+    }
+
+    // Create a new job
+    const newJob = new Job({
+      title,
+      description,
+      skills,
+      company,
+      location,
+      salary,
+      jobType,
+      employer,
+    });
+
+    const savedJob = await newJob.save();
+    res.status(201).json(savedJob);
+  } catch (error) {
+    console.error("Error creating job:", error);
+    res.status(500).json({ message: 'Error creating job', error: error.message });
+  }
+});
+
 module.exports = router;
