@@ -13,22 +13,26 @@ const JobSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    skills: {
+      type: String,
+      required: false,
+    },
     company: {
       type: String,
-      required: true,
+      required: false,
     },
     location: {
       type: String,
-      required: true,
+      required: false,
     },
     salary: {
       type: Number,
-      required: true,
+      required: false,
     },
     jobType: {
       type: String,
       enum: ['full-time', 'part-time', 'contract', 'temporary', 'internship'],
-      required: true,
+      required: false,
     },
     employer: {
       type: mongoose.Schema.Types.ObjectId, // Reference to the employer (user ID)
