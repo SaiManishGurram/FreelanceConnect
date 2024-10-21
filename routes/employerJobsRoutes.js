@@ -63,4 +63,24 @@ router.post('/createJob', verifyToken, async (req, res) => {
   }
 });
 
+// Delete a job
+router.delete('/deleteJob/:id', verifyToken, async (req, res) => {
+  const firebaseUid = req.user.uid; // Get Firebase UID from token
+  const employer = await User.findOne({ firebaseUid });
+  try {
+    // Check if the employer exists and has the 'employer' role
+    const employerExists = await User.findOne({ _id: employer, role: 'employer' });
+    if (!employerExists) {
+      return res.status(404).json({ message: 'Employer not found or not an employer' });
+    }
+    const deletedJob = await Job.findByIdAndDelete(req.params.id);
+    if (!deletedJob) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+    res.status(200).json({ message: 'Job deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting job', error });
+  }
+});
+
 module.exports = router;
