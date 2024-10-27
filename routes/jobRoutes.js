@@ -73,26 +73,7 @@ router.get('/:id', verifyToken, async (req, res) => {
   }
 });
 
-// Update a job
-router.put('/:id', verifyToken, async (req, res) => {
-  const { employer } = req.body;
 
-  try {
-
-    // Check if the employer exists and has the 'employer' role
-    const employerExists = await User.findOne({ _id: employer, role: 'employer' });
-    if (!employerExists) {
-      return res.status(404).json({ message: 'Employer not found or not an employer' });
-    }
-    const updatedJob = await Job.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updatedJob) {
-      return res.status(404).json({ message: 'Job not found' });
-    }
-    res.status(200).json(updatedJob);
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating job', error });
-  }
-});
 
 
 module.exports = router;

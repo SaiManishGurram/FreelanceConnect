@@ -17,7 +17,7 @@ router.get('/', verifyToken, async (req, res) => {
     const employerId = await User.findOne({ firebaseUid });
     
     // Fetch all jobs posted by the employer from the database
-    const jobs = await Job.find({ employer: employerId });
+    const jobs = await Job.find({ employer: employerId }).sort({ createdAt: -1 });
 
     if (!jobs || jobs.length === 0) {
       return res.status(404).json({ message: 'No jobs found for this employer' });
@@ -65,6 +65,8 @@ router.post('/createJob', verifyToken, async (req, res) => {
 
 // Delete a job
 router.delete('/deleteJob/:id', verifyToken, async (req, res) => {
+  console.log('dete');
+  
   const firebaseUid = req.user.uid; // Get Firebase UID from token
   const employer = await User.findOne({ firebaseUid });
   try {
@@ -83,4 +85,26 @@ router.delete('/deleteJob/:id', verifyToken, async (req, res) => {
   }
 });
 
+// Update a job
+router.put('/updateJob/:id', verifyToken, async (req, res) => {
+  console.log('uopade');
+  
+  const firebaseUid = req.user.uid; // Get Firebase UID from token
+  const employer = await User.findOne({ firebaseUid });
+  try {
+
+    // Check if the employer exists and has the 'employer' role
+    const employerExists = await User.findOne({ _id: employer, role: 'employer' });
+    if (!employerExists) {
+      return res.status(404).json({ message: 'Employer not found or not an employer' });
+    }
+    const updatedJob = await Job.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedJob) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+    res.status(200).json(updatedJob);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating job', error });
+  }
+});
 module.exports = router;
