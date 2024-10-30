@@ -8,7 +8,7 @@ const { Server: SocketIOServer } = require('socket.io');
 
 const jobRoutes = require('./routes/jobRoutes');
 const authRoutes = require('./routes/authRoutes');
-const applyRoutes = require('./routes/applyRoutes');
+const freelancerProposalsRoute = require('./routes/freelancerProposalsRoutes');
 const freelancerJobsRoute = require('./routes/freelancerJobsRoutes');
 const employerJobsRoute = require('./routes/employerJobsRoutes');
 const Message = require('./models/Message');  
@@ -45,7 +45,7 @@ app.use(cors());
 // Use job routes
 app.use('/api/register', authRoutes);
 app.use('/api/jobs', jobRoutes);
-app.use('/api/jobs/apply', applyRoutes); 
+app.use('/api/freelancer/proposals', freelancerProposalsRoute); 
 app.use('/api/freelancer/jobs', freelancerJobsRoute);
 app.use('/api/employer/jobs', employerJobsRoute);
 
